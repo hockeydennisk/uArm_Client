@@ -4,10 +4,17 @@ Serial myPort;
 
 void scanPort()
 {
-  String portName = Serial.list()[0];
-  myPort = new Serial(this, portName, 9600);
-  myPort.bufferUntil('\n');
-  dropList1.setItems(Serial.list(), 0);
+  if( Serial.list().length !=0) {
+    println(Serial.list().length);
+    String portName = Serial.list()[0];
+    myPort = new Serial(this, portName, 9600);
+    myPort.bufferUntil('\n');
+    dropList1.setItems(Serial.list(), 0);
+   }
+   else{
+     javax.swing.JOptionPane.showMessageDialog(null, "Can not find any ports.");
+     exit();
+   }
 }
 
 void sendPos(int _posZ, int _posY, int _posX, int _posH, byte ctlData)
@@ -58,4 +65,3 @@ byte unsignedByte( int val )
 {
   return (byte)( val > 127 ? val - 256 : val ); 
 }
-

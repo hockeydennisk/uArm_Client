@@ -2,14 +2,22 @@
 * File Name          : uArm_Client
 * Author             : Evan
 * Updated            : Evan
-* Version            : V0.5
+* Version            : V0.6
 * Date               : 2 Feb, 2015
 * Description        : Processing to control uArm using LeapMotion
                        using the "Standard.ino" on uArm.
                        Need G4P library and LeapMotionForProcessing library.
 * License            : 
 * Copyright(C) 2014 UFactory Team. All right reserved.
-*************************************************************************/
+*************************************************************************
+* update 
+* Date                : 27 Mar, 2015
+* Author              : Alex
+* Description         : 1.Mouse wheel control for arm Height, 
+*                       2.No need drag for 2d slider (Arm rotation, Arm Stretch)
+*/
+
+
 
 import g4p_controls.*;
 import processing.serial.*;
@@ -22,9 +30,18 @@ boolean LEAPMOTION_EN  = false;
 boolean CAMERA_EN  = false;
 boolean UPDATE_EN = false;
 byte suctionCup = 0;
+String OS_NAME;
+float wheelFactor;
 
 public void setup()
 {
+  OS_NAME = System.getProperty("os.name");
+  if(OS_NAME.startsWith("Windows")){
+      wheelFactor = 5.0;
+  }
+  else {
+       wheelFactor = 1.0;
+  }
   size(995, 450, JAVA2D);
  
   createGUI();
@@ -71,4 +88,3 @@ public void customGUI()
   slider2d2.setEasing(8.0);
   frame.setTitle("uArm Control Panel");
 }
-
