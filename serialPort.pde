@@ -12,7 +12,7 @@ void scanPort()
     myPort = new Serial(this, portName, 9600);
     myPort.bufferUntil('\n');
     dropList1.setItems(Serial.list(), 0);
-    boolean SERIAL_EN = true;
+    SERIAL_EN = true;
   }
   else{
     dropList1.setItems(new String[]{"NONE"}, 0);
