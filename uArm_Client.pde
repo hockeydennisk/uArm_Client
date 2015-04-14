@@ -2,22 +2,14 @@
 * File Name          : uArm_Client
 * Author             : Evan
 * Updated            : Evan
-* Version            : V0.6
+* Version            : V0.5
 * Date               : 2 Feb, 2015
 * Description        : Processing to control uArm using LeapMotion
                        using the "Standard.ino" on uArm.
                        Need G4P library and LeapMotionForProcessing library.
 * License            : 
 * Copyright(C) 2014 UFactory Team. All right reserved.
-*************************************************************************
-* update 
-* Date                : 27 Mar, 2015
-* Author              : Alex
-* Description         : 1.Mouse wheel control for arm Height, 
-*                       2.No need drag for 2d slider (Arm rotation, Arm Stretch)
-*/
-
-
+*************************************************************************/
 
 import g4p_controls.*;
 import processing.serial.*;
@@ -25,28 +17,27 @@ import de.voidplus.leapmotion.*;
 import gab.opencv.*;
 import processing.video.*;
 import java.awt.*;
+import javax.swing.*;
 
 boolean LEAPMOTION_EN  = false;
 boolean CAMERA_EN  = false;
 boolean UPDATE_EN = false;
+boolean SERIAL_EN = false;
+//socket
+boolean SOCKET_EN = false;
 byte suctionCup = 0;
-String OS_NAME;
-float wheelFactor;
+DatagramClient client = new DatagramClient();
+String ip = "0.0.0.0";
+int port = 0;
 
 public void setup()
 {
-  OS_NAME = System.getProperty("os.name");
-  if(OS_NAME.startsWith("Windows")){
-      wheelFactor = 5.0;
-  }
-  else {
-       wheelFactor = 1.0;
-  }
-  size(995, 450, JAVA2D);
+  size(995, 475, JAVA2D);
  
   createGUI();
   customGUI();
   scanPort();
+  
 }
 
 public void draw()
@@ -70,6 +61,10 @@ public void draw()
     label7.setText(knob1.getValueS());
     label7.setTextBold();
     UPDATE_EN = false;
+  }
+  if(SOCKET_EN)
+  {
+    // tf_ip_port.setEnabled(true);
   }
 }
 

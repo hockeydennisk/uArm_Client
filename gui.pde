@@ -108,7 +108,7 @@ public void createGUI(){
   G4P.setCursor(ARROW);
   if(frame != null)
     frame.setTitle("uArm Control Panel");
-  panel4 = new GPanel(this, 665, 260, 320, 180, "Setting");
+  panel4 = new GPanel(this, 665, 260, 320, 205, "Setting");
   panel4.setText("Setting");
   panel4.setLocalColorScheme(GCScheme.CYAN_SCHEME);
   panel4.setOpaque(true);
@@ -217,7 +217,49 @@ public void createGUI(){
   label9.setText("Height:");
   label9.setTextBold();
   label9.setOpaque(false);
+  
+  // socket version
+  tf_ip_port = new GLabel(this,10, 100, 300, 20);
+  panel4.addControl(tf_ip_port);
+  tf_ip_port.setText(ip+":"+port);
+  tf_ip_port.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
+  // tf_ip_port.setEnabled(false);
+  cb_socket = new GCheckbox(this, 11, 175, 300, 25);
+  cb_socket.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
+  cb_socket.setText(" Network Transfer");
+  cb_socket.setTextBold();
+  cb_socket.setOpaque(false);
+  cb_socket.addEventHandler(this, "cb_socket_clicked");
+   panel4.addControl(cb_socket);
+  
 }
+
+GLabel tf_ip_port;
+GCheckbox  cb_socket;
+
+public void cb_socket_clicked(GCheckbox source, GEvent event) { //_CODE_:checkbox2:428528:
+  //println("checkbox2 - GCheckbox event occured " + System.currentTimeMillis()%10000000 );
+  if(cb_socket.isSelected())
+  {
+    String name = JOptionPane.showInputDialog(
+        null, 
+        "Please input IP and port format like 192.168.1.1:8888", 
+        "Require IP address & port", 
+        JOptionPane.WARNING_MESSAGE
+    );
+    if(name != null){
+      String str_ip_port[] = name.split(":");
+      String ip_split = str_ip_port[0];
+      String str_port_split = str_ip_port[1];
+      ip = ip_split;
+      port = Integer.parseInt(str_port_split);
+      client.init(ip,port);
+      tf_ip_port.setText(ip+":"+port);
+      SOCKET_EN = true;
+    }
+  }
+  else {SOCKET_EN = false; }
+} //_CODE_:checkbox2:428528:
 
 void mouseWheel(MouseEvent event) {
   float e = event.getCount();
@@ -225,10 +267,9 @@ void mouseWheel(MouseEvent event) {
 //  int v = map(-40,40,1,10);
   float v = slider1.getValueF();
   // println("v=" + v);
-  slider1.setValue(v - e*wheelFactor);
+  slider1.setValue(v - e);
 }
 boolean hasCLICKED;
-
 void mouseClicked(){
   if(mouseX >=85 && mouseX <=600 && mouseY >=50 && mouseY <= 430){ 
       hasCLICKED = !hasCLICKED;
