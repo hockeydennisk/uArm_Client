@@ -2,10 +2,43 @@
 
 LeapMotion leap;
 boolean RESET_ARM = false;
+boolean GESTURE_LOCK = false;
 
 void initLeapMotion()
 {
-  leap = new LeapMotion(this);
+  leap = new LeapMotion(this).withGestures("circle");
+}
+
+void leapOnCircleGesture(CircleGesture g, int state){
+  int     id               = g.getId();
+  Finger  finger           = g.getFinger();
+  PVector position_center  = g.getCenter();
+  float   radius           = g.getRadius();
+  float   progress         = g.getProgress();
+  long    duration         = g.getDuration();
+  float   duration_seconds = g.getDurationInSeconds();
+  int     direction        = g.getDirection();
+
+  switch(state){
+    case 1:  // Start
+      break;
+    case 2: // Update
+      break;
+    case 3: // Stop
+      println("CircleGesture: "+id);
+      if(GESTURE_LOCK)
+      {
+        RESET_ARM = true;
+      }
+      break;
+  }
+  
+  switch(direction){
+    case 0: // Anticlockwise/Left gesture
+      break;
+    case 1: // Clockwise/Right gesture
+      break;
+  }
 }
 
 void readLeapMotion()
@@ -38,7 +71,10 @@ void readLeapMotion()
     float   sphere_radius    = hand.getSphereRadius();
 
     //if(hand_time>0.5)
-      RESET_ARM = true;
+     if(!GESTURE_LOCK)
+     {
+        RESET_ARM = true;
+     }
   
   // ========= FINGERS =========
     for(Finger finger : hand.getFingers()) {
@@ -80,7 +116,20 @@ void readLeapMotion()
       }
     }
     // pinch
-    if(hand_pinch > 0.3)
+
+    // draw
+    hand.draw(8.0, false);
+    tint(255, 200);  // Display at half opacity
+    
+    if(RESET_ARM && Math.abs(hand_dynamics.y) <100)
+    {
+      int xP = (int)map(constrain(hand_stabilized.x,     0, 1100),   0, 1100, -90,   90);  // min: -90   max: 90
+      int yP = (int)map(constrain(hand_stabilized.y,   100,  250), 100,  250, 150,  -55);  // min: -180  max: 150
+      int zP = (int)map(constrain(hand_position.z,       0,   80),   0,   80,   0,  210);  // min: 0     max: 210
+      // int rP = (int)map(constrain(hand_yaw - xP * 0.5, -40,   40), -40,   40, -90,   90);   // min: -90   max: 90
+      int rP = 0; //ignore hand angle
+      setUIPos(xP, yP, zP, rP);
+    if(hand_grab >= 0.8f)
     {
       suctionCup = 0x01;
       button1.setText("Catch");
@@ -92,17 +141,6 @@ void readLeapMotion()
       button1.setText("Release");
       button1.setTextBold();
     }
-    // draw
-    hand.draw(8.0, false);
-    tint(255, 200);  // Display at half opacity
-    
-    if(RESET_ARM && hand_grab < 0.8)
-    {
-      int xP = (int)map(constrain(hand_stabilized.x,     0, 1100),   0, 1100, -90,   90);  // min: -90   max: 90
-      int yP = (int)map(constrain(hand_stabilized.y,   100,  250), 100,  250, 150,  -55);  // min: -180  max: 150
-      int zP = (int)map(constrain(hand_position.z,       0,   80),   0,   80,   0,  210);  // min: 0     max: 210
-      int rP = (int)map(constrain(hand_yaw - xP * 0.5, -40,   40), -40,   40, -90,   90);   // min: -90   max: 90
-      setUIPos(xP, yP, zP, rP);
     } 
   }
   else
@@ -118,4 +156,3 @@ void readLeapMotion()
     }
   }
 }
-

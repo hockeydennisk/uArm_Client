@@ -1,13 +1,14 @@
 /************************************************************************
 * File Name          : uArm_Client
 * Author             : Evan
-* Updated            : Evan
-* Version            : V0.5
-* Date               : 2 Feb, 2015
+* Updated            : Alex
+* Version            : V0.65
+* Date               : 23 Apr, 2015
 * Description        : Processing to control uArm using LeapMotion
                        using the "Standard.ino" on uArm.
                        Need G4P library and LeapMotionForProcessing library.
-* License            : 
+* Update Note        : V0.6  Slider2d support Mouse move without drag. armHeight slider support Mouse wheel - 10-Apr-2015
+                       V0.65 Myo Control, UDP socket Control  - 23-Apr-2015
 * Copyright(C) 2014 UFactory Team. All right reserved.
 *************************************************************************/
 
@@ -18,21 +19,24 @@ import gab.opencv.*;
 import processing.video.*;
 import java.awt.*;
 import javax.swing.*;
+import de.voidplus.myo.*;
 
 boolean LEAPMOTION_EN  = false;
 boolean CAMERA_EN  = false;
 boolean UPDATE_EN = false;
 boolean SERIAL_EN = false;
-//socket
+//socket control
 boolean SOCKET_EN = false;
-byte suctionCup = 0;
+//myo control
+boolean MYO_EN = false;
+byte suctionCup = 0x02;
 DatagramClient client = new DatagramClient();
 String ip = "0.0.0.0";
 int port = 0;
 
 public void setup()
 {
-  size(995, 475, JAVA2D);
+  size(1000, 500, JAVA2D);
  
   createGUI();
   customGUI();
@@ -51,6 +55,10 @@ public void draw()
   {
     readCamera();
   }
+  if(MYO_EN)
+  {
+    readMyo();
+  }  
   if(UPDATE_EN)
   {
     sendPos(slider2d2.getValueYI(), slider1.getValueI(), slider2d2.getValueXI(), knob1.getValueI(), suctionCup);
@@ -62,10 +70,11 @@ public void draw()
     label7.setTextBold();
     UPDATE_EN = false;
   }
-  if(SOCKET_EN)
-  {
-    // tf_ip_port.setEnabled(true);
-  }
+  // if(SOCKET_EN)
+  // {
+  //   // tf_ip_port.setEnabled(true);
+  // }
+
 }
 
 void setUIPos(int _handPosX, int _handPosY, int _handPosZ, int _handRot)

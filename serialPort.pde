@@ -21,7 +21,7 @@ void scanPort()
 
 void sendPos(int _posZ, int _posY, int _posX, int _posH, byte ctlData)
 {
-  println("Rotation: " + _posX + "  Stretch: " + _posY + "  Height: " + _posZ + "  HandRot: " + _posH + "  Grab: " + ctlData);
+  // println("Rotation: " + _posX + "  Stretch: " + _posY + "  Height: " + _posZ + "  HandRot: " + _posH + "  Grab: " + ctlData);
   byte[] send = 
   {
     byte(0xFF),
@@ -38,8 +38,8 @@ void sendPos(int _posZ, int _posY, int _posX, int _posH, byte ctlData)
   };
   if(SERIAL_EN)
      myPort.write(send);
-   String result = new BigInteger(1, send).toString(16);
-   println(result);
+   // String result = new BigInteger(1, send).toString(16);
+   // println(result);
    if(SOCKET_EN)
     {
          client.send(send);
@@ -69,12 +69,35 @@ void sendAngle(int _angleL, int _angleR, int _angleRot, int _angleHandRot, byte 
   };
    if(SERIAL_EN)
      myPort.write(send);
-   String result = new BigInteger(1, send).toString(16);
-   println(result);
+   // String result = new BigInteger(1, send).toString(16);
+   // println(result);
    if(SOCKET_EN)
     {
          client.send(send);
     }   
+}
+
+void reset(){
+    byte[] send = 
+      {
+        byte(0xFF),
+        byte(0xAA),
+        byte((0 >> 8) & 0xFF),
+        byte( 0 & 0xFF),
+        byte((0 >> 8) & 0xFF),
+        byte( 0 & 0xFF),
+        byte((0 >> 8) & 0xFF),
+        byte( 0 & 0xFF),
+        byte((0 >> 8) & 0xFF),
+        byte( 0 & 0xFF),
+        byte(0x80)
+      };
+   if(SERIAL_EN)
+     myPort.write(send);
+   // String result = new BigInteger(1, send).toString(16);
+   // println(result);
+   if(SOCKET_EN)
+         client.send(send);  
 }
 
 byte unsignedByte( int val )
